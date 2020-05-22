@@ -11,7 +11,6 @@ import (
 )
 
 func ThreadReaper(url string, pageTitle string) {
-	// Request the HTML page.
 	res, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
@@ -21,7 +20,6 @@ func ThreadReaper(url string, pageTitle string) {
 		log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
 	}
 
-	// Load the HTML document
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		log.Fatal(err)
@@ -49,7 +47,6 @@ func ThreadReaper(url string, pageTitle string) {
 	fmt.Printf("<time>%s</time>", t.Format("2006-01-02T15:04:05-07:00"))
 	fmt.Println(`</div><!-- page-header -->`)
 
-	// Find the review items
 	doc.Find(".content-tweet").Each(func(i int, s *goquery.Selection) {
 		screenName, e1 := s.Attr("data-screenname")
 		tweet, e2 := s.Attr("data-tweet")
@@ -73,13 +70,8 @@ func ThreadReaper(url string, pageTitle string) {
 }
 
 func main() {
-	/* var pageTitle string
-		flag.StringVar(&pageTitle, "title", "", "page title")
-	  flag.Parse()
-	*/
-
 	url := os.Args[1]
-	pageTitle := "---"
+	pageTitle := ""
 	if len(os.Args) > 2 {
 		pageTitle = os.Args[2]
 	}
