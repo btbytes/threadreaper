@@ -126,7 +126,7 @@ func main() {
 		Check(err)
 		fmt.Fprintf(f, `<div class="row tweet" data-screenname="%s" data-tweet="%s">%s</div>`, screenName, tweet, res)
 	})
-	fmt.Fprintf(f, `<footer>Retrieved on <span class="time"><time>%s</time></span>`, t.Format("2006-01-02T15:04:05-07:00"))
+	fmt.Fprintf(f, `</div><footer>Retrieved on <span class="time"><time>%s</time></span>`, t.Format("2006-01-02T15:04:05-07:00"))
 	fmt.Fprintf(f, `, from <a href="%s">threadreaderapp page</a></footer></body></html>`, url)
 
 }
