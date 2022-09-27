@@ -8,6 +8,8 @@ import (
 	"os"
 	"strings"
 	"time"
+	"encoding/base64"
+	"io/ioutil"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gosimple/slug"
@@ -25,6 +27,38 @@ func GetTheadId(url string) string {
 	parts := strings.Split(url, "/")
 	fname := strings.Split(parts[len(parts)-1], ".")[0]
 	return fname
+}
+
+func toBase64(b []byte) string {
+	return base64.StdEncoding.EncodeToString(b)
+}
+
+func getImageBase64(url string) string {
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer resp.Body.Close()
+
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var base64Encoding string
+	mimeType := http.DetectContentType(bytes)
+
+	switch mimeType {
+	case "image/jpeg":
+		base64Encoding += "data:image/jpeg;base64,"
+	case "image/png":
+		base64Encoding += "data:image/png;base64,"
+	}
+
+	base64Encoding += toBase64(bytes)
+	return base64Encoding
+
 }
 
 func main() {
@@ -118,7 +152,7 @@ func main() {
 		s.Find("img").Each(func(ii int, ss *goquery.Selection) {
 			imgURL, imgExists := ss.Attr("data-src")
 			if imgExists {
-				ss.SetAttr("src", imgURL)
+				ss.SetAttr("src", getImageBase64(imgURL))
 			}
 		})
 		s.Find(".tw-permalink").Remove()
